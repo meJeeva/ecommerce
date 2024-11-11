@@ -1,24 +1,45 @@
-import {BASE_URL} from '../utils/constants';
+import { BASE_URL } from "../utils/constants";
 
-const getProductCategory = async () => {
-  try {
-    const response = await fetch(`${BASE_URL}/products/categories`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
+const getAllCategoriesApi = async () => {
+    try {
+        const response = await fetch(`${BASE_URL}/category/get-all`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
 
-    if (!response.ok) {
-      throw new Error('Failed to fetch categories');
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.log("Error fetching categories:", error.message || error);
+        return null;
     }
-
-    const data = await response.json(); 
-    return data; 
-  } catch (error) {
-    console.error('Error fetching product categories:', error);
-    throw error; 
-  }
 };
 
-export {getProductCategory};
+const getAllOfferBannerApi = async (type) => {
+    try {
+        const response = await fetch(`${BASE_URL}/banner/get-all?type=${type}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.log("Error fetching categories:", error.message || error);
+        return null;
+    }
+};
+
+export { getAllCategoriesApi, getAllOfferBannerApi };
