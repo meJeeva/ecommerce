@@ -2,7 +2,7 @@ const Banner = require('../model/bannerModel');
 
 const createBanner = async (req, res) => {
   try {
-    const {image, type} = req.body;
+    const { image, type } = req.body;
 
     if (!image) {
       return res.status(500).json({
@@ -40,11 +40,9 @@ const createBanner = async (req, res) => {
 
 const allBanner = async (req, res) => {
   try {
-    const {type} = req.query;
-    console.log('Query type:', type);
+    const { type } = req.query;
 
-    const banner = await Banner.find({type});
-    console.log('Banner result:', banner);
+    const banner = await Banner.find({ type });
     res.status(200).json({
       success: true,
       data: banner,

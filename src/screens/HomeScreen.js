@@ -1,18 +1,20 @@
 import {
   FlatList,
   Image,
+  ScrollView,
   Text,
   TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import {styled} from 'nativewind';
-import {IMAGES} from '../utils/constants';
-import {getAllCategoriesApi, getAllOfferBannerApi} from '../api/api';
+import { styled } from 'nativewind';
+import { COLORS, IMAGES } from '../utils/constants';
+import { getAllCategoriesApi, getAllLanguagesApi, getAllOfferBannerApi } from '../api/api';
 import AutoScrollFlatList from '../components/AutoScrollFlatList';
+import { RadioButton } from 'react-native-paper';
 
 const StyledTextInput = styled(TextInput);
 const StyledFlatList = styled(FlatList);
@@ -25,6 +27,8 @@ const HomeScreen = () => {
     offerBanner: [],
     productBanner: [],
     activeIndex: 0,
+    languages: [],
+    selectedLanguage: {}
   });
 
   useEffect(() => {
@@ -32,8 +36,8 @@ const HomeScreen = () => {
   }, []);
 
   const initialFunctions = () => {
-    Promise.all([getAllCategories(), getAllOffers(), getAllProductBanner()])
-      .then(() => {})
+    Promise.all([getAllCategories(), getAllOffers(), getAllProductBanner(), getAllLanguages()])
+      .then(() => { })
       .catch(error => {
         console.log('Error fetching initial data:', error.message || error);
       });
@@ -42,7 +46,7 @@ const HomeScreen = () => {
   const getAllCategories = async () => {
     try {
       const response = await getAllCategoriesApi();
-      setState(prev => ({...prev, categories: response?.data || []}));
+      setState(prev => ({ ...prev, categories: response?.data || [] }));
     } catch (error) {
       console.log(error.message || error);
     }
@@ -52,7 +56,7 @@ const HomeScreen = () => {
     try {
       let type = 'offer';
       const response = await getAllOfferBannerApi(type);
-      setState(prev => ({...prev, offerBanner: response?.data || []}));
+      setState(prev => ({ ...prev, offerBanner: response?.data || [] }));
     } catch (error) {
       console.log(error.message || error);
     }
@@ -62,7 +66,16 @@ const HomeScreen = () => {
     try {
       let type = 'product';
       const response = await getAllOfferBannerApi(type);
-      setState(prev => ({...prev, productBanner: response?.data || []}));
+      setState(prev => ({ ...prev, productBanner: response?.data || [] }));
+    } catch (error) {
+      console.log(error.message || error);
+    }
+  };
+
+  const getAllLanguages = async () => {
+    try {
+      const response = await getAllLanguagesApi();
+      setState(prev => ({ ...prev, languages: response?.data || [] }));
     } catch (error) {
       console.log(error.message || error);
     }
@@ -90,7 +103,7 @@ const HomeScreen = () => {
           <View className="flex-1">
             <StyledTextInput
               value={state.search}
-              onChangeText={text => setState(prev => ({...prev, search: text}))}
+              onChangeText={text => setState(prev => ({ ...prev, search: text }))}
               placeholder="Search for kitchen Item"
               placeholderTextColor="grey"
               className="py-1"
@@ -101,60 +114,93 @@ const HomeScreen = () => {
           <FontAwesome name="microphone" size={15} />
         </TouchableOpacity>
       </View>
-
-      {/* categories list */}
-      <View className="">
-        <StyledFlatList
-          data={state.categories}
-          keyExtractor={item => item.categoryId.toString()}
-          renderItem={({item, index}) => (
-            <TouchableOpacity
-              key={index}
-              className="items-center gap-3 p-1 pb-3 w-24 mr-3">
-              <StyledImage
-                source={{
-                  uri: item.categoryImage ? item.categoryImage : IMAGES.noImage,
-                }}
-                className="w-16 h-16 rounded-full"
-              />
-              <Text className=" font-montserrat-rg text-xs">
-                {item.categoryName}
-              </Text>
-            </TouchableOpacity>
-          )}
-          contentContainerStyle={{paddingHorizontal: 20}}
-          contentInset={{top: 20}}
-          showsVerticalScrollIndicator={false}
-          className="mt-5 "
-          horizontal
-          showsHorizontalScrollIndicator={false}
-        />
-      </View>
-
-      {/* offer banner */}
-      <View>
-        <FlatList
-          data={state.offerBanner}
-          renderItem={({item, index}) => (
-            <View key={index}>
-              <TouchableOpacity className="">
+      <ScrollView className='flex-1'>
+        {/* categories list */}
+        <View className="">
+          <StyledFlatList
+            data={state.categories}
+            keyExtractor={item => item.categoryId.toString()}
+            renderItem={({ item, index }) => (
+              <TouchableOpacity
+                key={index}
+                className="items-center gap-3 p-1 pb-3 w-24 mr-3">
                 <StyledImage
                   source={{
-                    uri: item.image ? item.image : IMAGES.noImage,
+                    uri: item.categoryImage ? item.categoryImage : IMAGES.noImage,
                   }}
-                  className="min-w-full h-32 resize-none"
+                  className="w-16 h-16 rounded-full"
                 />
+                <Text className=" font-montserrat-rg text-xs">
+                  {item.categoryName}
+                </Text>
               </TouchableOpacity>
-            </View>
-          )}
-        />
-      </View>
-      {/* product banner */}
-      <AutoScrollFlatList
-        data={state.productBanner}
-        activeIndex={state.activeIndex}
-        setState={setState}
-      />
+            )}
+            contentContainerStyle={{ paddingHorizontal: 20 }}
+            contentInset={{ top: 20 }}
+            showsVerticalScrollIndicator={false}
+            className="mt-5 "
+            horizontal
+            showsHorizontalScrollIndicator={false}
+          />
+        </View>
+
+        {/* offer banner */}
+        <View>
+          <FlatList
+            data={state.offerBanner}
+            renderItem={({ item, index }) => (
+              <View key={index}>
+                <TouchableOpacity className="">
+                  <StyledImage
+                    source={{
+                      uri: item.image ? item.image : IMAGES.noImage,
+                    }}
+                    className="min-w-full h-32 resize-none"
+                  />
+                </TouchableOpacity>
+              </View>
+            )}
+          />
+        </View>
+        {/* product banner */}
+        {
+          state.productBanner &&
+            state.productBanner.length > 0 ? (
+            <AutoScrollFlatList
+              data={state.productBanner}
+              activeIndex={state.activeIndex}
+              setState={setState}
+            />
+          ) : null
+        }
+        <View>
+          <Text className="ml-4 text-base font-montserrat-b">Choose Language</Text>
+          <View>
+            <StyledFlatList
+              data={state.languages}
+              renderItem={({ item, index }) => (
+                <View key={index}>
+                  <View className="bg-white border border-slate-200 rounded-xl shadow-lg px-3 mx-2 py-1 flex-row items-center ">
+                    <Text className={`${index % 2 === 0 ? `bg-orange-300` : `bg-purple-300`} px-2 mr-3 py-1 rounded-md`}>{item.name ? item.name[0] : item.name}</Text>
+                    <Text className='text-center mr-2'>{item.name}</Text>
+                    <RadioButton
+                      value={state.selectedLanguage}
+                      status={state.selectedLanguage.name === item.name ? 'checked' : 'unchecked'}
+                      onPress={() => {
+                        setState((prev) => ({ ...prev, selectedLanguage: item }))
+                      }}
+                      color={COLORS.blue}
+                    />
+                  </View>
+                </View>
+              )}
+              horizontal
+              className='mt-3 ml-3'
+              showsHorizontalScrollIndicator={false}
+            />
+          </View>
+        </View>
+      </ScrollView>
     </View>
   );
 };

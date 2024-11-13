@@ -42,4 +42,25 @@ const getAllOfferBannerApi = async (type) => {
     }
 };
 
-export { getAllCategoriesApi, getAllOfferBannerApi };
+const getAllLanguagesApi = async (type) => {
+    try {
+        const response = await fetch(`${BASE_URL}/language/get-all`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.log("Error fetching categories:", error.message || error);
+        return null;
+    }
+};
+
+export { getAllCategoriesApi, getAllOfferBannerApi, getAllLanguagesApi };
