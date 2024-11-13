@@ -43,7 +43,6 @@ const createCategory = async (req, res) => {
 const allCategories = async (req, res) => {
     try {
         const categories = await category.find();
-        console.log('categories', categories);
 
         res.status(200).json({
             success: true,

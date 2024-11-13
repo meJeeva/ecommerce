@@ -1,10 +1,18 @@
-import { FlatList, Image, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import {
+  FlatList,
+  Image,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import React, {useEffect, useState} from 'react';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import { styled } from 'nativewind';
-import { IMAGES } from '../utils/constants';
-import { getAllCategoriesApi, getAllOfferBannerApi } from '../api/api';
+import {styled} from 'nativewind';
+import {IMAGES} from '../utils/constants';
+import {getAllCategoriesApi, getAllOfferBannerApi} from '../api/api';
+import AutoScrollFlatList from '../components/AutoScrollFlatList';
 
 const StyledTextInput = styled(TextInput);
 const StyledFlatList = styled(FlatList);
@@ -14,6 +22,9 @@ const HomeScreen = () => {
   const [state, setState] = useState({
     search: '',
     categories: [],
+    offerBanner: [],
+    productBanner: [],
+    activeIndex: 0,
   });
 
   useEffect(() => {
@@ -21,12 +32,9 @@ const HomeScreen = () => {
   }, []);
 
   const initialFunctions = () => {
-    Promise.all([getAllCategories(),
-    getAllOffers()
-    ])
-      .then(() => {
-      })
-      .catch((error) => {
+    Promise.all([getAllCategories(), getAllOffers(), getAllProductBanner()])
+      .then(() => {})
+      .catch(error => {
         console.log('Error fetching initial data:', error.message || error);
       });
   };
@@ -34,7 +42,7 @@ const HomeScreen = () => {
   const getAllCategories = async () => {
     try {
       const response = await getAllCategoriesApi();
-      setState(prev => ({ ...prev, categories: response?.data || [] }));
+      setState(prev => ({...prev, categories: response?.data || []}));
     } catch (error) {
       console.log(error.message || error);
     }
@@ -44,15 +52,26 @@ const HomeScreen = () => {
     try {
       let type = 'offer';
       const response = await getAllOfferBannerApi(type);
+      setState(prev => ({...prev, offerBanner: response?.data || []}));
     } catch (error) {
       console.log(error.message || error);
     }
-  }
+  };
+
+  const getAllProductBanner = async () => {
+    try {
+      let type = 'product';
+      const response = await getAllOfferBannerApi(type);
+      setState(prev => ({...prev, productBanner: response?.data || []}));
+    } catch (error) {
+      console.log(error.message || error);
+    }
+  };
 
   return (
     <View className="flex-1 bg-white">
       <View className="flex-row justify-between mx-6 my-5 mb-8">
-        <Text className="font-montserrat-m">Techdeal</Text>
+        <Text className="font-montserrat-m text-2xl">Techdeal</Text>
         <View className="flex-row gap-5">
           <TouchableOpacity>
             <FontAwesome name="language" size={22} />
@@ -71,7 +90,7 @@ const HomeScreen = () => {
           <View className="flex-1">
             <StyledTextInput
               value={state.search}
-              onChangeText={text => setState(prev => ({ ...prev, search: text }))}
+              onChangeText={text => setState(prev => ({...prev, search: text}))}
               placeholder="Search for kitchen Item"
               placeholderTextColor="grey"
               className="py-1"
@@ -88,25 +107,54 @@ const HomeScreen = () => {
         <StyledFlatList
           data={state.categories}
           keyExtractor={item => item.categoryId.toString()}
-          renderItem={({ item, index }) => (
-            <TouchableOpacity key={index} className="items-center gap-3 p-1 pb-3 w-24 mr-5">
+          renderItem={({item, index}) => (
+            <TouchableOpacity
+              key={index}
+              className="items-center gap-3 p-1 pb-3 w-24 mr-3">
               <StyledImage
                 source={{
-                  uri: item.categoryImage ? item.categoryImage : IMAGES.noImage
+                  uri: item.categoryImage ? item.categoryImage : IMAGES.noImage,
                 }}
-                className='w-20 h-20 rounded-full'
+                className="w-16 h-16 rounded-full"
               />
-              <Text className=" font-montserrat-rg text-xs">{item.categoryName}</Text>
+              <Text className=" font-montserrat-rg text-xs">
+                {item.categoryName}
+              </Text>
             </TouchableOpacity>
           )}
-          contentContainerStyle={{ paddingHorizontal: 20 }}
-          contentInset={{ top: 20 }}
+          contentContainerStyle={{paddingHorizontal: 20}}
+          contentInset={{top: 20}}
           showsVerticalScrollIndicator={false}
-          className='mt-5 '
+          className="mt-5 "
           horizontal
           showsHorizontalScrollIndicator={false}
         />
       </View>
+
+      {/* offer banner */}
+      <View>
+        <FlatList
+          data={state.offerBanner}
+          renderItem={({item, index}) => (
+            <View key={index}>
+              <TouchableOpacity className="">
+                <StyledImage
+                  source={{
+                    uri: item.image ? item.image : IMAGES.noImage,
+                  }}
+                  className="min-w-full h-32 resize-none"
+                />
+              </TouchableOpacity>
+            </View>
+          )}
+        />
+      </View>
+      {/* product banner */}
+      <AutoScrollFlatList
+        data={state.productBanner}
+        activeIndex={state.activeIndex}
+        setState={setState}
+      />
     </View>
   );
 };

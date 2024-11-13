@@ -17,7 +17,7 @@ router.get('/category/get-all', allCategories);
 
 // banner
 router.post('/banner/create', createBanner);
-router.get('/banner/get-all/:type', allBanner);
+router.get('/banner/get-all', allBanner);
 
 app.use('/api', router);
 
