@@ -13,13 +13,6 @@ const StackScreen = () => {
     return (
         <Stack.Navigator>
             <Stack.Screen
-                name='BottomNavigation'
-                component={BottomNavigation}
-                options={{
-                    headerShown: false
-                }}
-            />
-            <Stack.Screen
                 name='SplashScreen'
                 component={SplashScreen}
                 options={{
