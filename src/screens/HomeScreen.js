@@ -84,7 +84,7 @@ const HomeScreen = () => {
   return (
     <View className="flex-1 bg-white">
       <View className="flex-row justify-between mx-6 my-5 mb-8">
-        <Text className="font-montserrat-m text-2xl">Techdeal</Text>
+        <Text className="font-montserrat-m text-2xl">Bestdeal</Text>
         <View className="flex-row gap-5">
           <TouchableOpacity>
             <FontAwesome name="language" size={22} />
