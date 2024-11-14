@@ -106,7 +106,7 @@ const HomeScreen = () => {
               onChangeText={text => setState(prev => ({ ...prev, search: text }))}
               placeholder="Search for kitchen Item"
               placeholderTextColor="grey"
-              className="py-1"
+              className="py-0"
             />
           </View>
         </View>
@@ -123,7 +123,7 @@ const HomeScreen = () => {
             renderItem={({ item, index }) => (
               <TouchableOpacity
                 key={index}
-                className="items-center gap-3 p-1 pb-3 w-24 mr-3">
+                className="items-center gap-3 p-0 pb-3 w-20 mr-3">
                 <StyledImage
                   source={{
                     uri: item.categoryImage ? item.categoryImage : IMAGES.noImage,

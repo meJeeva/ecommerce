@@ -3,6 +3,7 @@ const ConnectDB = require('./ConnectDB');
 const { createCategory, allCategories } = require('./controller/categoryController');
 const { createBanner, allBanner } = require('./controller/bannerController');
 const { createLanguage, allLanguage } = require('./controller/languageController');
+const { createSubCategory } = require("./controller/subCategoryContoller");
 const app = express();
 const router = express.Router();
 const PORT = 8000;
@@ -23,6 +24,9 @@ router.get('/banner/get-all', allBanner);
 // language
 router.post('/language/create', createLanguage);
 router.get('/language/get-all', allLanguage);
+
+// subcategory
+router.post('/subcategory/create', createSubCategory);
 
 app.use('/api', router);
 

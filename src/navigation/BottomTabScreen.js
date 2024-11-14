@@ -44,7 +44,7 @@ const BottomTabScreen = () => {
             }} />
             <Tab.Screen name='MyCartScreen' component={MyCartScreen} options={{
                 headerShown: false,
-                title: "Cart"
+                title: "My Cart"
             }} />
             <Tab.Screen name='ProfileScreen' component={ProfileScreen} options={{
                 headerShown: false,
