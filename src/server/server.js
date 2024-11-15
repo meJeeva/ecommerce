@@ -16,7 +16,6 @@ app.use(express.json());
 router.post('/category/create', createCategory);
 router.get('/category/get-all', allCategories);
 
-
 // banner
 router.post('/banner/create', createBanner);
 router.get('/banner/get-all', allBanner);
