@@ -3,7 +3,7 @@ const { v4: uuidv4 } = require('uuid');
 
 const createSubCategory = async (req, res) => {
   try {
-    const { subCategoryName, categoryId, subcategoryImage } = req.body;
+    const { subCategoryName, categoryId, subcategoryImage, categoryName } = req.body;
 
     if (!subCategoryName) {
       return res.status(404).json({
@@ -23,7 +23,8 @@ const createSubCategory = async (req, res) => {
       subCategoryName,
       categoryId,
       subcategoryImage,
-      subCategoryId: uuidv4()
+      subCategoryId: uuidv4(),
+      categoryName
     });
 
     await createSubCategory.save();

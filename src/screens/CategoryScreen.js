@@ -1,10 +1,9 @@
 import { FlatList, Image, Pressable, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import { Divider } from 'react-native-paper';
 import { getAllCategoriesApi, getAllSubCategoriesApi } from '../api/api';
 import { styled } from 'nativewind';
-import { TouchableWithoutFeedback } from 'react-native';
 import { IMAGES } from '../utils/constants';
 
 const StyledFlatList = styled(FlatList)
@@ -13,8 +12,11 @@ const CategoryScreen = () => {
     const [state, setState] = useState({
         categories: [],
         selectedCategory: {},
-        subCategories: []
+        subCategories: [],
+        focusedIndex: null,
     });
+
+    const focusedRef = useRef(null)
 
     useEffect(() => {
         initialFunction();
@@ -63,6 +65,16 @@ const CategoryScreen = () => {
         }
     };
 
+    const handleFocus = (data) => {
+        let subCategoryName = state.subCategories.filter((item) => item.category === data.categoryName);
+        let findSubCategory = 0;
+        if (subCategoryName && subCategoryName.length > 0) {
+            findSubCategory = state.subCategories.findIndex(item => item.category === subCategoryName[0].category);
+        }
+        setState(prev => ({ ...prev, focusedIndex: findSubCategory }))
+        focusedRef.current.scrollToIndex({ index: findSubCategory, animated: true, viewPosition: 0.5, });
+    };
+
     return (
         <View className="flex-1 bg-white">
             <View className='my-7 flex-row mx-7 justify-between'>
@@ -76,15 +88,20 @@ const CategoryScreen = () => {
                 <View className='w-[25%] bg-slate-50'>
                     <StyledFlatList
                         data={state.categories}
-                        renderItem={({ item, index }) => <RenderCategories item={item} index={index} state={state} setState={setState} />}
+                        renderItem={({ item, index }) => <RenderCategories item={item} index={index} state={state} setState={setState}
+                            onFocusCategory={handleFocus}
+                        />}
                         showsVerticalScrollIndicator={false}
                     />
                 </View>
                 <View className='w-[75%] '>
                     <StyledFlatList
                         data={state.subCategories}
-                        renderItem={({ item, index }) => <RenderSubCategories item={item} index={index} state={state} />}
+                        renderItem={({ item, index }) => <RenderSubCategories item={item} index={index} state={state}
+                        />}
                         showsVerticalScrollIndicator={false}
+                        ref={focusedRef}
+                        extraData={state.focusedIndex}
                     />
                 </View>
             </View>
@@ -92,7 +109,7 @@ const CategoryScreen = () => {
     )
 }
 
-const RenderCategories = ({ item, index, state, setState }) => {
+const RenderCategories = ({ item, index, state, setState, onFocusCategory }) => {
     const isSelected = state.selectedCategory.categoryName === item.categoryName;
     const imageClass = isSelected
         ? 'h-12 w-12 rounded-full border border-red-600'
@@ -100,6 +117,7 @@ const RenderCategories = ({ item, index, state, setState }) => {
 
     return (
         <Pressable onPress={() => {
+            onFocusCategory(item)
             setState((prev) => ({ ...prev, selectedCategory: item }))
         }} key={index} className={`items-center py-4 ${isSelected ? `bg-white` : ``}`}>
             <Image
@@ -115,19 +133,20 @@ const RenderSubCategories = ({ item, index, state }) => {
     return (
         <View key={index} className='p-2'>
             <Text className='font-montserrat-b mb-4'>{item.category}</Text>
-            <View className='flex-row flex-wrap'>
+            <View className='flex-row flex-wrap justify-start gap-2 '>
                 {
                     item.subCategory &&
                         item.subCategory.length > 0 ?
                         item.subCategory.map((item, index) => {
                             return (
-                                <View className='w-[30%] mx-auto'>
+                                <TouchableOpacity className='w-[30%] items-center '>
                                     <Image
                                         source={{ uri: item.subcategoryImage ? item.subcategoryImage : IMAGES.noImage }}
-                                        className='h-20 w-20 rounded-lg'
+                                        className='h-24 w-24 rounded-lg'
+                                        resizeMode='contain'
                                     />
-                                    <Text className=''>{item.subCategoryName}</Text>
-                                </View>
+                                    <Text className='text-center mt-1 font-montserrat-rg'>{item.subCategoryName}</Text>
+                                </TouchableOpacity>
                             )
                         }) : null
                 }
