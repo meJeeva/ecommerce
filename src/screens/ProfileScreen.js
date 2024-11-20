@@ -1,10 +1,15 @@
 import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
+import { Divider } from 'react-native-paper'
 
 const ProfileScreen = () => {
     return (
-        <View>
-            <Text>ProfileScreen</Text>
+        <View className='flex-1 bg-white'>
+            <Text className='font-montserrat-sb text-base'>My Account</Text>
+            <Divider />
+            <View>
+
+            </View>
         </View>
     )
 }
