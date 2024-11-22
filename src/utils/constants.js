@@ -1,6 +1,7 @@
 
 const COLORS = {
   blue: '#1a8cff',
+  red: '#ff0000'
 };
 const BASE_URL = 'http://192.168.0.210:8000/api';
 // const BASE_URL = 'http://192.168.29.23:8000/api';
